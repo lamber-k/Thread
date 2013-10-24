@@ -5,12 +5,9 @@
 // Login   <lamber_k@epitech.net>
 //
 // Started on  Mon Apr 15 14:22:56 2013 lambert kevin
-// Last update Fri Oct 11 17:13:53 2013 lambert kevin
+// Last update Thu Oct 24 19:13:35 2013 lambert kevin
 //
 
-#if defined(WIN32)
-# include	"Stdafx.h"
-#endif
 #include	"ThreadCond.hh"
 
 namespace	Thread
@@ -18,7 +15,7 @@ namespace	Thread
   Cond::Cond()
   {
 #if defined(WIN32)
-	  InitializeConditionVariable(&_c);
+    InitializeConditionVariable(&_c);
 #elif defined(linux)
     pthread_cond_init(&_c, 0);
 #else
@@ -34,10 +31,10 @@ namespace	Thread
   bool	Cond::broadcast()
   {
 #if defined(WIN32)
-	WakeAllConditionVariable(&_c);
+    WakeAllConditionVariable(&_c);
 #elif defined(linux)
     if (pthread_cond_broadcast(&_c) != 0)
-		return (false);
+      return (false);
 #else
 #error "Unsupported Operating system"
 #endif
@@ -47,10 +44,10 @@ namespace	Thread
   bool	Cond::signal()
   {
 #if defined(WIN32)
-	WakeConditionVariable(&_c);
+    WakeConditionVariable(&_c);
 #elif defined(linux)
     if (pthread_cond_signal(&_c) != 0)
-		return (false);
+      return (false);
 #else
 #error "Unsupported Operating system"
 #endif
@@ -60,13 +57,13 @@ namespace	Thread
   bool	Cond::wait(Mutex &m)
   {
 #if defined(WIN32)
-	if (SleepConditionVariableCS(&_c, &m.getMutex(), INFINITE) != 0)
+    if (SleepConditionVariableCS(&_c, &m.getMutex(), INFINITE) != 0)
 #elif defined(linux)
-    if (pthread_cond_wait(&_c, &m.getMutex()) != 0)
+      if (pthread_cond_wait(&_c, &m.getMutex()) != 0)
 #else
 #error "Unsupported Operating system"
 #endif
-      return (false);
+	return (false);
     return (true);
   }
 

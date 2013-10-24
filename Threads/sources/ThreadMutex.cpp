@@ -5,12 +5,9 @@
 // Login   <lamber_k@epitech.net>
 //
 // Started on  Mon Apr 15 15:19:07 2013 lambert kevin
-// Last update Fri Oct 11 17:14:03 2013 lambert kevin
+// Last update Thu Oct 24 19:13:55 2013 lambert kevin
 //
 
-#if defined(WIN32)
-# include	<StdAfx.h>
-#endif
 #include	"ThreadMutex.hh"
 
 namespace Thread
@@ -26,10 +23,10 @@ namespace Thread
   bool			Mutex::lock()
   {
 #if defined(WIN32)
-	  EnterCriticalSection(&_m);
-	  return (true);
+    EnterCriticalSection(&_m);
+    return (true);
 #elif defined(linux)
-	  return (pthread_mutex_lock(&_m) == 0 ? true : false);
+    return (pthread_mutex_lock(&_m) == 0 ? true : false);
 #else
 # error "Unsupported Operating system"
 #endif
@@ -38,8 +35,8 @@ namespace Thread
   bool			Mutex::unlock()
   {
 #if defined(WIN32)
-	  LeaveCriticalSection(&_m);
-	  return (true);
+    LeaveCriticalSection(&_m);
+    return (true);
 #elif defined(linux)
     return (pthread_mutex_unlock(&_m) == 0 ? true : false);
 #else
@@ -50,8 +47,8 @@ namespace Thread
   bool			Mutex::trylock()
   {
 #if defined(WIN32)
-	  TryEnterCriticalSection(&_m);
-	  return (true);
+    TryEnterCriticalSection(&_m);
+    return (true);
 #elif defined(linux)
     return (pthread_mutex_trylock(&_m) == 0 ? true : false);
 #else
@@ -66,9 +63,9 @@ namespace Thread
 
 
 #if defined(WIN32)
-  CRITICAL_SECTION	&Mutex::getMutex()  // Can do better...
+  CRITICAL_SECTION	&Mutex::getMutex()
 #elif defined(linux)
-  pthread_mutex_t	&Mutex::getMutex()  // Can do better...
+  pthread_mutex_t	&Mutex::getMutex()
 #else
 # error "Unsupported Operating system"
 #endif
@@ -77,13 +74,13 @@ namespace Thread
   }
 
   MutexGuard::MutexGuard(Mutex &m) :
-	_locker(m)
+    _locker(m)
   {
     _locker.lock();
   }
 
   MutexGuard::~MutexGuard()
   {
-	_locker.unlock();
+    _locker.unlock();
   }
 }

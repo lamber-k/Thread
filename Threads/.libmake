@@ -1,0 +1,114 @@
+#!/usr/bin/make
+##
+## .libmake
+##
+## Made by jules baratoux
+## Login   <barato_j@epitech.net>
+##
+## Started on  Fri Apr 26 18:09:49 2013 jules baratoux
+## Last update Tue Jun 11 21:28:37 2013 lambert kevin
+##
+## ┌───────────────────────────────────────────────────────────────────────────┐
+## │                            MAKEFILE LIBRARY                               │
+## └───────────────────────────────────────────────────────────────────────────┘
+
+RM            = rm -f
+
+AR            = ar rcs
+
+F.C          += $(add)
+F.C          += $(ADD)
+F.D          +=
+F.I          += -I $(DIR.H)
+
+DIR.H         = include/
+DIR.C         = sources/
+DIR.O         = .objects/
+
+
+
+## VARIABLES ───────────────────────────────────────────────────────────────────
+
+ECHO          = @/bin/echo -e $(ES)"-"$(EE)
+
+ifeq ($(INSIDE_EMACS), t)
+     ES      ?= ""
+     EE      ?= ""
+     F.C     += -ggdb3 -O0 -Winline
+     PREQ    += tags
+else
+     ES      ?= "\033[1;34m"
+     EE      ?= "\033[m"
+endif
+
+
+EXTENSION     = $(shell echo $(wordlist 1,1, $(SRCS)) | sed 's|.*\.\(.*\)|\1|')
+
+ifeq ($(EXTENSION), cpp)
+     c        = .cpp
+     CC       = g++
+     ifeq ($(LD), ld)
+         LD           = g++
+     endif
+else
+     c        = .c
+     CC       = gcc
+     ifeq ($(LD), ld)
+         LD           = gcc
+     endif
+endif
+
+SRCD          = $(SRCS:%$c=$(DIR.C)%$c)
+OBJS          = $(SRCD:$(DIR.C)%$c=$(DIR.O)%.o)
+DEPS          = $(OBJS:.o=.d)
+
+
+
+## RULES ───────────────────────────────────────────────────────────────────────
+
+start:          $(PREQ)
+
+ifeq ($(LD), $(AR))
+compile:	$(OBJS)
+		$(ECHO) "options" $(F.C) $(F.D) "\n"
+		$(ECHO) $(LD) $(F.L) $(wordlist 1,4, $(notdir $(OBJS)))"..."
+		@$(LD) $(NAME) $(F.L) $(OBJS)
+else
+compile:	$(OBJS)
+		$(ECHO) "options" $(F.C) $(F.D) "\n"
+		$(ECHO) $(LD) $(F.L) $(wordlist 1,4, $(notdir $(OBJS)))"..."
+		@$(LD) $(OBJS) $(F.L) -o $(NAME)
+endif
+
+remove_objects:
+		$(ECHO) rm $(wordlist 1,4, $(notdir $(OBJS)))"..."
+		$(ECHO) rm $(wordlist 1,4, $(notdir $(DEPS)))"..."
+		@$(RM) -R $(DIR.O)*
+
+remove_name:
+		$(ECHO) rm $(NAME)
+		@$(RM) $(NAME)
+		@echo
+
+dirs:
+		@mkdir -p $(DIR.H) $(DIR.C) $(DIR.O)
+		@mkdir -p `find $(DIR.C) -type d | sed s-$(DIR.C)-$(DIR.O)-`
+		$(ECHO) mkdir $(DIR.H) $(DIR.C) $(DIR.O) `find $(DIR.C) -type d | sed s-$(DIR.C)-$(DIR.O)-`
+
+tree:
+		@which tree && tree -CN --dirsfirst -I TAGS
+
+tags:
+		$(ECHO) "generate tags \n"
+		-@cd $(DIR.C) && etags `find ../$(DIR.C) -name "*$c"` `find ../$(DIR.H) -regex ".*\.h[hp]+"`
+
+norme:
+		norme -nocheat $(SRCD) `find ../$(DIR.H) -regex ".*\.h[thp]+"`
+
+$(DIR.O)%.o:    $(DIR.C)%$c
+		$(ECHO) $(notdir $@)
+		@$(CC) $(F.I) $(F.C) $(F.D) -MMD -c -o $@ $<
+
+-include $(DEPS)
+
+.PHONY:         all clean dirs fclean link norme re remove_name remove_objects tags title tree start
