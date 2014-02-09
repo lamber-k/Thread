@@ -11,7 +11,6 @@
 #ifndef		WINTHREADCOND_HH_
 # define	WINTHREADCOND_HH_
 
-# include	"StdAfx.h"
 # include	<windows.h>
 # include	"WinThreadMutex.hh"
 
